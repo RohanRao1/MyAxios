@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>saving details on crud</title>
+<body>
+    <form onsubmit="savetolocal(event)">
+        <label for="name">Name : </label>
+        <input type="text" id="name" name="username"  required >
+        <label for="mail">Email :</label>
+        <input type="email" id="mail" name="mail"  required>
+        <label for="phno">Phone :</label>
+        <input type="number" id="phno" name="phno" >
+        <input type="submit" value="Get a call">
+    </form>
+
+    <ul id="listofusers"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.5/axios.min.js"></script>
+    <script>
+        function savetolocal(event){
+            event.preventDefault()
+            const name = event.target.username.value
+            const email = event.target.mail.value
+            const Phone = event.target.phno.value
+
+            const obj ={
+                name,
+                email,
+                Phone
+            }
+
+            axios.post('https://crudcrud.com/api/9c53738cec10428cac1b7517525f54b7/studentdetails', obj )
+                .then((response) => {
+                    showUserOnScreen(response.data)
+                    // console.log(response)
+                })
+                .catch(error => console.log(error))
+            
+            
+            window.addEventListener('DOMContentLoaded',() => {
+                const localStorageObj = localStorage
+                const localStorageKeys = Object.keys(localStorageObj)
+
+                for (let i = 0 ; i< localStorageKeys.length ; i++){
+                    const key = localStorageKeys[i]
+                    const userdetailsString = localStorageObj[key]
+                    const userdetailsObj = JSON.parse(userdetailsString)
+                    showUserOnScreen(userdetailsObj)
+                }
+            })
+
+            function showUserOnScreen(user){
+                const parentnode = document.getElementById('listofusers')
+                const child =  `<li id=${user.email}> ${user.name} - ${user.email} - ${user.Phone} <button onclick=editUser('${user.email}','${user.name}','${user.phone}') style = "border : 3px solid green;">Edit </button> <button onclick=deleteUser('${user.email}') style = "border : 3px solid red;">Delete</button> </li>`
+                parentnode.innerHTML = parentnode.innerHTML + child
+            }
+
+           
+        }
+    </script>  
+</body>
+</html>
